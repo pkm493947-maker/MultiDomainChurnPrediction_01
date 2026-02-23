@@ -2,43 +2,52 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 
-def preprocess_data(file_path, output_path, target_column=None):
-    print("\n----------------------------------------")
-    print(f"📌 Reading Dataset: {file_path}")
+def preprocess_combined(file_path, output_path):
 
-    # Auto detect separator (comma / semicolon / tab / etc.)
-    df = pd.read_csv(file_path, sep=None, engine="python")
+    print("\n📌 Preprocessing Dataset...")
 
-    print("✅ Dataset Loaded Successfully!")
-    print("📌 Original Dataset Shape:", df.shape)
+    # ✅ Correct loading
+    df = pd.read_csv(file_path)
 
-    # Remove duplicates
-    df = df.drop_duplicates()
+    print("✅ Dataset Loaded")
+    print("Original Shape:", df.shape)
 
-    # Fill missing values
-    df = df.ffill()
+    # 🔥 Remove ID / leakage columns if exist
+    drop_cols = ["CustomerID", "customerID", "ID"]
+    for col in drop_cols:
+        if col in df.columns:
+            df.drop(columns=[col], inplace=True)
+
+    print("✅ ID / Leakage Columns Removed (if present)")
+
+    # Separate target
+    target = df["Churn"]
+    df = df.drop(columns=["Churn"])
 
     # Encode categorical columns
-    for col in df.select_dtypes(include=["object"]).columns:
+    categorical_cols = df.select_dtypes(include=["object"]).columns
+
+    for col in categorical_cols:
         le = LabelEncoder()
         df[col] = le.fit_transform(df[col].astype(str))
 
-    # Scale numeric columns except target column
+    print("✅ Categorical Columns Encoded")
+
+    # Scale features
     scaler = StandardScaler()
-    numeric_cols = df.select_dtypes(include=["int64", "float64"]).columns
+    df_scaled = pd.DataFrame(
+        scaler.fit_transform(df),
+        columns=df.columns
+    )
 
-    if target_column is not None and target_column in numeric_cols:
-        numeric_cols = numeric_cols.drop(target_column)
+    # Add target back
+    df_scaled["Churn"] = target.values
 
-    if len(numeric_cols) > 0:
-        df[numeric_cols] = scaler.fit_transform(df[numeric_cols])
+    print("✅ Final Shape After Preprocessing:", df_scaled.shape)
 
-    print("✅ Cleaned Dataset Shape:", df.shape)
+    df_scaled.to_csv(output_path, index=False)
 
-    # Save cleaned dataset
-    df.to_csv(output_path, index=False)
-
-    print(f"✅ Cleaned Dataset Saved: {output_path}")
+    print("✅ Preprocessed Dataset Saved:", output_path)
     print("----------------------------------------")
 
-    return df
+    return df_scaled

@@ -1,0 +1,11 @@
+CustomerID,Gender,SeniorCitizen,Partner,Dependents,Tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,Contract,PaperlessBilling,MonthlyCharges,TotalCharges,Churn_Probability
+1,Male,0,Yes,No,5,Yes,No,Fiber optic,No,Month-to-month,Yes,70.35,350.50,0.6
+2,Female,0,No,No,24,Yes,Yes,DSL,Yes,One year,No,99.20,2380.80,0.2
+3,Male,0,Yes,No,12,Yes,No,Fiber optic,No,Month-to-month,Yes,89.10,1069.20,0.75
+4,Female,0,No,No,48,Yes,Yes,DSL,Yes,Two year,No,75.00,3600.00,0.1
+5,Male,1,No,No,3,No,No,Fiber optic,No,Month-to-month,Yes,65.50,196.50,0.8
+6,Female,0,Yes,Yes,36,Yes,Yes,DSL,Yes,One year,Yes,95.25,3429.00,0.3
+7,Male,0,Yes,No,18,Yes,Yes,Fiber optic,No,Month-to-month,No,88.50,1593.00,0.5
+8,Female,1,No,No,6,Yes,No,DSL,Yes,Month-to-month,Yes,60.75,364.50,0.7
+9,Male,0,No,No,30,Yes,Yes,Fiber optic,Yes,One year,Yes,90.00,2700.00,0.4
+10,Female,0,Yes,Yes,12,No,No,DSL,No,Month-to-month,No,75.50,906.00,0.6

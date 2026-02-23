@@ -1,0 +1,5 @@
+Age,Tenure,Balance,NumOfProducts,IsActiveMember,Complain,CashbackAmount,DaySinceLastOrder,OrderCount,Geography,Gender
+45,5,12000,2,1,0,300,10,5,1,1
+30,2,5000,1,0,1,150,5,2,0,0
+60,8,25000,3,1,0,500,20,10,1,1
+25,1,1000,1,0,1,50,2,1,0,1

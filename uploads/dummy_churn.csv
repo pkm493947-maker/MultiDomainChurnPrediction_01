@@ -1,0 +1,11 @@
+CustomerID,Churn_Probability,Churn_Prediction,risk_level,retention_action
+1,0.85,1,High,Call Customer
+2,0.65,1,Medium,Email Offer
+3,0.30,0,Low,No Action
+4,0.90,1,High,Call Customer
+5,0.50,1,Medium,Email Offer
+6,0.20,0,Low,No Action
+7,0.75,1,High,Call Customer
+8,0.40,0,Low,No Action
+9,0.60,1,Medium,Email Offer
+10,0.15,0,Low,No Action

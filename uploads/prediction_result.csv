@@ -1,0 +1,11 @@
+CustomerID,Gender,SeniorCitizen,Partner,Dependents,Tenure,PhoneService,MultipleLines,InternetService,OnlineSecurity,Contract,PaperlessBilling,MonthlyCharges,TotalCharges,Churn_Probability,Probability,Prediction,Risk,Strategy
+1,Male,0,Yes,No,5,Yes,No,Fiber optic,No,Month-to-month,Yes,70.35,350.5,0.6,0.97442853,1,High,Offer 1-Year Contract Upgrade with Discount
+2,Female,0,No,No,24,Yes,Yes,DSL,Yes,One year,No,99.2,2380.8,0.2,0.5345619,1,Medium,Send Loyalty Points + Targeted Promotion Email
+3,Male,0,Yes,No,12,Yes,No,Fiber optic,No,Month-to-month,Yes,89.1,1069.2,0.75,0.93159616,1,High,Offer 25% Discount + Dedicated Support Call
+4,Female,0,No,No,48,Yes,Yes,DSL,Yes,Two year,No,75.0,3600.0,0.1,0.5345619,1,Medium,Send Loyalty Points + Targeted Promotion Email
+5,Male,1,No,No,3,No,No,Fiber optic,No,Month-to-month,Yes,65.5,196.5,0.8,0.9664915,1,High,Offer 1-Year Contract Upgrade with Discount
+6,Female,0,Yes,Yes,36,Yes,Yes,DSL,Yes,One year,Yes,95.25,3429.0,0.3,0.5345619,1,Medium,Send Loyalty Points + Targeted Promotion Email
+7,Male,0,Yes,No,18,Yes,Yes,Fiber optic,No,Month-to-month,No,88.5,1593.0,0.5,0.7801725,1,High,Offer 25% Discount + Dedicated Support Call
+8,Female,1,No,No,6,Yes,No,DSL,Yes,Month-to-month,Yes,60.75,364.5,0.7,0.96300644,1,High,Offer 1-Year Contract Upgrade with Discount
+9,Male,0,No,No,30,Yes,Yes,Fiber optic,Yes,One year,Yes,90.0,2700.0,0.4,0.5345619,1,Medium,Send Loyalty Points + Targeted Promotion Email
+10,Female,0,Yes,Yes,12,No,No,DSL,No,Month-to-month,No,75.5,906.0,0.6,0.941295,1,High,Offer 1-Year Contract Upgrade with Discount

@@ -1,34 +1,57 @@
 import pandas as pd
-from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.preprocessing import MinMaxScaler
+import numpy as np
+from sklearn.feature_selection import mutual_info_classif
 
 
-def feature_selection(input_file, target_column, output_file, k=10):
-    print("\n----------------------------------------")
-    print(f"📌 Feature Selection for: {input_file}")
+def select_features(file_path, output_path, top_k=25):
 
-    df = pd.read_csv(input_file)
+    print("\n🔍 Feature Selection Started...")
 
-    X = df.drop(columns=[target_column])
-    y = df[target_column]
+    df = pd.read_csv(file_path, low_memory=False)
 
-    # chi-square requires non-negative values
-    scaler = MinMaxScaler()
-    X_scaled = scaler.fit_transform(X)
+    print("📊 Dataset Shape:", df.shape)
 
-    selector = SelectKBest(score_func=chi2, k=k)
-    selector.fit(X_scaled, y)
+    if "Churn" not in df.columns:
+        raise Exception("❌ Churn column missing!")
 
-    selected_features = X.columns[selector.get_support()]
+    # ✅ Convert Churn to numeric (VERY IMPORTANT FIX)
+    df["Churn"] = pd.to_numeric(df["Churn"], errors="coerce")
 
-    print("✅ Selected Features:", list(selected_features))
+    # Fill missing after conversion
+    df = df.dropna(subset=["Churn"])
 
-    new_df = df[selected_features].copy()
-    new_df[target_column] = y
+    y = df["Churn"]
+    X = df.drop(columns=["Churn"])
 
-    new_df.to_csv(output_file, index=False)
+    # ✅ Convert ALL columns to numeric (force safe conversion)
+    for col in X.columns:
+        X[col] = pd.to_numeric(X[col], errors="coerce")
 
-    print(f"✅ Feature Selected Dataset Saved: {output_file}")
-    print("----------------------------------------")
+    # Fill NaN created by conversion
+    X = X.fillna(0)
 
-    return list(selected_features)
+    print("⚡ Calculating Mutual Information...")
+
+    mi_scores = mutual_info_classif(X, y)
+
+    mi_df = pd.DataFrame({
+        "Feature": X.columns,
+        "MI_Score": mi_scores
+    })
+
+    mi_df = mi_df.sort_values(by="MI_Score", ascending=False)
+
+    print("\n🔝 Top Features:")
+    print(mi_df.head(top_k))
+
+    selected_features = mi_df["Feature"].head(top_k).tolist()
+
+    X_selected = X[selected_features]
+    X_selected["Churn"] = y.values
+
+    X_selected.to_csv(output_path, index=False)
+
+    print("✅ Selected Feature Dataset Saved:", output_path)
+    print("------------------------------------")
+
+    return selected_features

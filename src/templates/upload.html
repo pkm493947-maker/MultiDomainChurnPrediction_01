@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📤 Upload Customer CSV</h2>
+
+<form action="/predict" method="post" enctype="multipart/form-data">
+
+<input type="file" name="file" class="form-control" required>
+
+<br>
+
+<button class="btn btn-primary">
+Predict Now
+</button>
+
+</form>
+
+{% endblock %}

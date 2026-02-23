@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>🔗 Blockchain Ledger</h2>
+
+<table class="table table-dark table-striped">
+<tr>
+<th>File</th>
+<th>Total</th>
+<th>High</th>
+<th>Medium</th>
+<th>Low</th>
+</tr>
+
+{% for record in blockchain %}
+<tr>
+<td>{{ record.file }}</td>
+<td>{{ record.total_customers }}</td>
+<td>{{ record.high_risk }}</td>
+<td>{{ record.medium_risk }}</td>
+<td>{{ record.low_risk }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

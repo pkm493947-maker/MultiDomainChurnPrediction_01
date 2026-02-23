@@ -1,0 +1,182 @@
+[
+    {
+        "timestamp": "2026-02-21 11:14:59.279463",
+        "data": {
+            "model": "Multi Domain ANN",
+            "dataset": "Combined Telecom + Banking + Ecommerce",
+            "status": "Trained Successfully"
+        },
+        "hash": "22cb84374cc1a5761de6828f113b7629aa298a9d9e345de02689841277fa7772"
+    },
+    {
+        "timestamp": "2026-02-21 11:16:32.198577",
+        "data": {
+            "model": "Multi Domain ANN",
+            "dataset": "Combined Telecom + Banking + Ecommerce",
+            "status": "Trained Successfully"
+        },
+        "hash": "22cb84374cc1a5761de6828f113b7629aa298a9d9e345de02689841277fa7772"
+    },
+    {
+        "timestamp": "2026-02-21 11:23:21.735465",
+        "data": {
+            "model": "Multi Domain ANN",
+            "dataset": "Combined Telecom + Banking + Ecommerce",
+            "status": "Trained Successfully"
+        },
+        "hash": "22cb84374cc1a5761de6828f113b7629aa298a9d9e345de02689841277fa7772"
+    },
+    {
+        "timestamp": "2026-02-21 11:28:33.672165",
+        "data": {
+            "model": "Multi Domain ANN",
+            "dataset": "Combined Telecom + Banking + Ecommerce",
+            "status": "Trained Successfully"
+        },
+        "hash": "22cb84374cc1a5761de6828f113b7629aa298a9d9e345de02689841277fa7772"
+    },
+    {
+        "timestamp": "2026-02-21 11:30:59.089147",
+        "data": {
+            "model": "Multi Domain ANN",
+            "dataset": "Combined Telecom + Banking + Ecommerce",
+            "status": "Trained Successfully"
+        },
+        "hash": "22cb84374cc1a5761de6828f113b7629aa298a9d9e345de02689841277fa7772"
+    },
+    {
+        "file": "test_churn_input.csv",
+        "total_customers": 4,
+        "high_risk": 4,
+        "medium_risk": 0,
+        "low_risk": 0
+    },
+    {
+        "file": "test_churn_input.csv",
+        "total_customers": 4,
+        "high_risk": 0,
+        "medium_risk": 0,
+        "low_risk": 4
+    },
+    {
+        "file": "dummy_churn.csv",
+        "total_customers": 10,
+        "high_risk": 0,
+        "medium_risk": 0,
+        "low_risk": 10
+    },
+    {
+        "file": "test_churn_input.csv",
+        "total_customers": 4,
+        "high_risk": 0,
+        "medium_risk": 0,
+        "low_risk": 4
+    },
+    {
+        "file": "sample.csv",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1
+    },
+    {
+        "file": "sample.csv",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1
+    },
+    {
+        "file": "sample.csv",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1
+    },
+    {
+        "file": "sample.csv",
+        "timestamp": "2026-02-21 21:54:16",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1,
+        "high_risk_ids": [
+            "C001",
+            "C004",
+            "C010"
+        ]
+    },
+    {
+        "file": "sample.csv",
+        "timestamp": "2026-02-21 21:56:30",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1,
+        "high_risk_ids": [
+            "C001",
+            "C004",
+            "C010"
+        ]
+    },
+    {
+        "file": "test_churn_input.csv",
+        "timestamp": "2026-02-21 21:59:26",
+        "total_customers": 4,
+        "high_risk": 0,
+        "medium_risk": 0,
+        "low_risk": 4,
+        "high_risk_ids": []
+    },
+    {
+        "file": "sample.csv",
+        "timestamp": "2026-02-21 21:59:46",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1,
+        "high_risk_ids": [
+            "C001",
+            "C004",
+            "C010"
+        ]
+    },
+    {
+        "file": "sample.csv",
+        "timestamp": "2026-02-22 15:33:34",
+        "total_customers": 10,
+        "high_risk": 3,
+        "medium_risk": 6,
+        "low_risk": 1,
+        "high_risk_ids": [
+            "C001",
+            "C004",
+            "C010"
+        ]
+    },
+    {
+        "file": "test_churn_input.csv",
+        "timestamp": "2026-02-22 15:35:54",
+        "total_customers": 4,
+        "high_risk": 0,
+        "medium_risk": 0,
+        "low_risk": 4,
+        "high_risk_ids": []
+    },
+    {
+        "file": "telecom.csv",
+        "timestamp": "2026-02-22 15:36:53",
+        "total_customers": 10,
+        "high_risk": 6,
+        "medium_risk": 4,
+        "low_risk": 0,
+        "high_risk_ids": [
+            1,
+            3,
+            5,
+            7,
+            8,
+            10
+        ]
+    }
+]

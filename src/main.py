@@ -1,95 +1,109 @@
 import os
-from preprocess import preprocess_data
-from feature_selection import feature_selection
+import pandas as pd
+
+from preprocess import preprocess_combined
+from feature_selection import select_features
 from train_ann import train_ann_model
+from blockchain_storage import store_blockchain_record
+from visualize_results import visualize_results
 
 
-# Get current file location (src folder)
+# ==========================================================
+# 🔥 PATH SETUP
+# ==========================================================
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# Project root folder
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 
-# Dataset and output paths
 DATASET_DIR = os.path.join(PROJECT_DIR, "datasets")
 OUTPUT_DIR = os.path.join(PROJECT_DIR, "outputs")
 MODELS_DIR = os.path.join(PROJECT_DIR, "models")
 
-# Create folders if not exist
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(MODELS_DIR, exist_ok=True)
 
-print("\n📂 Checking datasets folder...")
-print("Files inside datasets folder:", os.listdir(DATASET_DIR))
+print("\n📂 Project Initialized")
+print("Datasets Folder:", DATASET_DIR)
 
 
-# -------------------- STEP 1: PREPROCESSING --------------------
+# ==========================================================
+# 🔥 STEP 1 — LOAD COMBINED DATASET
+# ==========================================================
 
-telecom_clean = os.path.join(OUTPUT_DIR, "cleaned_telecom.csv")
-banking_clean = os.path.join(OUTPUT_DIR, "cleaned_banking.csv")
-ecommerce_clean = os.path.join(OUTPUT_DIR, "cleaned_ecommerce.csv")
+combined_path = os.path.join(DATASET_DIR, "combined_data.csv")
 
-preprocess_data(os.path.join(DATASET_DIR, "telecom.csv"), telecom_clean, target_column="Churn")
-preprocess_data(os.path.join(DATASET_DIR, "banking.csv"), banking_clean, target_column="Exited")
-preprocess_data(os.path.join(DATASET_DIR, "ecommerce.csv"), ecommerce_clean, target_column="Churn")
+if not os.path.exists(combined_path):
+    print("❌ combined_data.csv NOT FOUND!")
+    print("Run create_combined_dataset.py first.")
+    exit()
 
-print("\n🎉 Preprocessing Completed Successfully!")
+print("\n✅ Combined Dataset Found:", combined_path)
 
 
-# -------------------- STEP 2: FEATURE SELECTION --------------------
+# ==========================================================
+# 🔥 STEP 2 — PREPROCESS
+# ==========================================================
 
-selected_telecom = os.path.join(OUTPUT_DIR, "selected_telecom.csv")
-selected_banking = os.path.join(OUTPUT_DIR, "selected_banking.csv")
-selected_ecommerce = os.path.join(OUTPUT_DIR, "selected_ecommerce.csv")
+processed_path = os.path.join(OUTPUT_DIR, "preprocessed_combined.csv")
 
-feature_selection(
-    telecom_clean,
-    target_column="Churn",
-    output_file=selected_telecom,
-    k=10
+preprocess_combined(
+    file_path=combined_path,
+    output_path=processed_path
 )
 
-feature_selection(
-    banking_clean,
-    target_column="Exited",
-    output_file=selected_banking,
-    k=10
+
+# ==========================================================
+# 🔥 STEP 3 — FEATURE SELECTION
+# ==========================================================
+
+selected_path = os.path.join(OUTPUT_DIR, "selected_features.csv")
+
+select_features(
+    file_path=processed_path,
+    output_path=selected_path,
+    top_k=25
 )
 
-feature_selection(
-    ecommerce_clean,
+
+# ==========================================================
+# 🔥 STEP 4 — TRAIN ANN MODEL (WITH SMOTE + AUTO THRESHOLD)
+# ==========================================================
+
+model = train_ann_model(
+    data_path=selected_path,     # ✅ change here
     target_column="Churn",
-    output_file=selected_ecommerce,
-    k=10
-)
-
-print("\n🎉 Feature Selection Completed Successfully!")
-
-
-# -------------------- STEP 3: ANN TRAINING --------------------
-
-print("\n🚀 Training ANN Models Started...")
-
-train_ann_model(
-    selected_telecom,
-    target_column="Churn",
-    model_name="telecom_ann",
+    model_name="multi_domain_ann",
     models_folder=MODELS_DIR
 )
 
-train_ann_model(
-    selected_banking,
-    target_column="Exited",
-    model_name="banking_ann",
-    models_folder=MODELS_DIR
+
+# ==========================================================
+# 🔥 STEP 5 — STORE MODEL RESULT IN BLOCKCHAIN
+# ==========================================================
+
+print("\n🔗 Storing Result in Blockchain...")
+
+blockchain_data = {
+    "model": "Multi Domain ANN",
+    "dataset": "Combined Telecom + Banking + Ecommerce",
+    "status": "Trained Successfully"
+}
+
+store_blockchain_record(blockchain_data)
+
+print("✅ Blockchain Record Stored")
+
+
+# ==========================================================
+# 🔥 STEP 6 — VISUALIZE RESULTS
+# ==========================================================
+
+print("\n📊 Generating Visual Reports...")
+
+visualize_results(
+    model_path=os.path.join(MODELS_DIR, "multi_domain_ann.keras"),
+    dataset_path=selected_path
 )
 
-train_ann_model(
-    selected_ecommerce,
-    target_column="Churn",
-    model_name="ecommerce_ann",
-    models_folder=MODELS_DIR
-)
-
-print("\n🎉 All ANN Models Trained Successfully!")
-print("📂 Check models folder for saved ANN models.")
+print("\n🎉 PROJECT EXECUTION COMPLETED SUCCESSFULLY 🚀")
+print("Check models / outputs / blockchain folders.")

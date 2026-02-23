@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>📊 Risk Analytics Dashboard</h2>
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="card card-custom p-4">
+            <h5>Total Uploads</h5>
+            <h2>{{ total_uploads }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-custom p-4">
+            <h5>High Risk</h5>
+            <h2>{{ high_risk }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-custom p-4">
+            <h5>Low Risk</h5>
+            <h2>{{ low_risk }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<hr>
+
+<h4>📈 Risk Distribution</h4>
+<canvas id="riskChart"></canvas>
+
+<script>
+var ctx = document.getElementById('riskChart').getContext('2d');
+
+new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{
+            data: [{{ high_risk }}, {{ medium_risk }}, {{ low_risk }}],
+            backgroundColor: ['red','orange','green']
+        }]
+    }
+});
+</script>
+
+{% endblock %}

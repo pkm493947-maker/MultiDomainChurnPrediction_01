@@ -1,0 +1,11 @@
+customerID,tenure,MonthlyCharges,TotalCharges,Contract,PaymentMethod,InternetService
+C001,2,85,170,Month-to-month,Electronic check,Fiber optic
+C002,24,45,1080,One year,Bank transfer (automatic),DSL
+C003,60,25,1500,Two year,Credit card (automatic),No
+C004,5,95,475,Month-to-month,Electronic check,Fiber optic
+C005,36,65,2340,One year,Mailed check,DSL
+C006,1,110,110,Month-to-month,Electronic check,Fiber optic
+C007,48,30,1440,Two year,Bank transfer (automatic),No
+C008,10,75,750,Month-to-month,Mailed check,DSL
+C009,72,20,1440,Two year,Credit card (automatic),No
+C010,3,99,297,Month-to-month,Electronic check,Fiber optic

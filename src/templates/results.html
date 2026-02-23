@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prediction Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .risk-high {
+            background-color: #ff4d4d;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .risk-medium {
+            background-color: #ffc107;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .risk-low {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .strategy-box {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+
+    <h2 class="mb-4 text-center">📊 Individual Customer Prediction Results</h2>
+
+    {% if high_risk|length > 0 %}
+    <div class="alert alert-danger">
+        🚨 <strong>{{ high_risk|length }}</strong> High Risk Customers Detected!
+        Immediate retention action recommended.
+    </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Probability</th>
+                    <th>Risk Level</th>
+                    <th>Retention Strategy</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.customerID }}</td>
+
+                <td>{{ "%.2f"|format(customer.Probability) }}</td>
+
+                <td>
+                    {% if customer.Risk == "High" %}
+                        <span class="risk-high">High</span>
+                    {% elif customer.Risk == "Medium" %}
+                        <span class="risk-medium">Medium</span>
+                    {% else %}
+                        <span class="risk-low">Low</span>
+                    {% endif %}
+                </td>
+
+                <td class="strategy-box">
+                    {{ customer.Strategy }}
+                </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/download/{{ result_file }}" class="btn btn-success">
+            ⬇ Download Result File
+        </a>
+
+        <a href="/dashboard" class="btn btn-primary">
+            📊 Go to Dashboard
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>

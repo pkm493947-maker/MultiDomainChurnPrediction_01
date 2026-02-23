@@ -1,3 +1,5 @@
+# predict.py
+
 import pandas as pd
 import numpy as np
 import joblib
@@ -5,82 +7,88 @@ import os
 from tensorflow.keras.models import load_model
 
 
-def predict_churn(input_file, model_file, scaler_file, output_file, threshold=0.45):
+MODEL_PATH = "../models/combined_ann.keras"
+SCALER_PATH = "../models/combined_scaler.pkl"
+FEATURE_PATH = "../models/combined_features.pkl"
+
+
+def risk_level(prob):
+
+    if prob < 0.3:
+        return "LOW"
+    elif prob < 0.7:
+        return "MEDIUM"
+    else:
+        return "HIGH"
+
+
+def predict_churn(input_file, output_file, threshold=0.5):
+
     print("\n----------------------------------------")
-    print(f"📌 Predicting Churn for File: {input_file}")
+    print("📌 Predicting Churn for File:", input_file)
 
-    # Load input dataset
     df = pd.read_csv(input_file)
-    print("✅ Input file loaded successfully!")
-    print("📌 Input Shape:", df.shape)
 
-    # Load trained model
-    model = load_model(model_file)
-    print(f"✅ Model Loaded: {model_file}")
+    print("✅ Input File Loaded")
+    print("📊 Input Shape:", df.shape)
 
-    # Load scaler
-    scaler = joblib.load(scaler_file)
-    print(f"✅ Scaler Loaded: {scaler_file}")
-
-    # Remove target column if present
+    # Remove target if exists
     if "Churn" in df.columns:
         df = df.drop("Churn", axis=1)
-    if "Exited" in df.columns:
-        df = df.drop("Exited", axis=1)
 
-    # Handle missing values
-    df = df.fillna(0)
+    # Load model
+    model = load_model(MODEL_PATH)
+    print("✅ Model Loaded")
 
-    # Convert categorical to numeric
+    scaler = joblib.load(SCALER_PATH)
+    print("✅ Scaler Loaded")
+
+    feature_list = joblib.load(FEATURE_PATH)
+    print("✅ Training Feature List Loaded")
+
+    # One-hot encode
     df = pd.get_dummies(df, drop_first=True)
 
-    # Scale input features
+    # Align columns
+    print("📌 Aligning features...")
+    for col in feature_list:
+        if col not in df.columns:
+            df[col] = 0
+
+    df = df[feature_list]
+
+    # Scale
     X_scaled = scaler.transform(df)
 
-    # Predict probabilities
-    y_prob = model.predict(X_scaled)
+    # Predict probability
+    probs = model.predict(X_scaled).flatten()
+
+    df["Churn_Probability"] = probs
 
     # Apply threshold
-    y_pred = (y_prob >= threshold).astype(int)
+    df["Churn_Prediction"] = (probs >= threshold).astype(int)
 
-    # Add predictions to dataframe
-    df["Churn_Probability"] = y_prob
-    df["Churn_Prediction"] = y_pred
+    # Add Risk Level
+    df["Risk_Level"] = df["Churn_Probability"].apply(risk_level)
 
-    # Save output
     df.to_csv(output_file, index=False)
+
     print(f"✅ Prediction Saved Successfully: {output_file}")
     print("----------------------------------------\n")
 
 
+# ==============================
+# RUN
+# ==============================
+
 if __name__ == "__main__":
-    os.makedirs("outputs", exist_ok=True)
 
-    # Telecom Prediction
-    predict_churn(
-        input_file="outputs/selected_telecom.csv",
-        model_file=r"C:\Users\Mamatha\Desktop\models\telecom_ann.keras",
-        scaler_file=r"C:\Users\Mamatha\Desktop\models\telecom_ann_scaler.pkl",
-        output_file="outputs/predicted_telecom.csv",
-        threshold=0.45
-    )
+    os.makedirs("../outputs", exist_ok=True)
 
-    # Banking Prediction
     predict_churn(
-        input_file="outputs/selected_banking.csv",
-        model_file=r"C:\Users\Mamatha\Desktop\models\banking_ann.keras",
-        scaler_file=r"C:\Users\Mamatha\Desktop\models\banking_ann_scaler.pkl",
-        output_file="outputs/predicted_banking.csv",
-        threshold=0.45
-    )
-
-    # Ecommerce Prediction
-    predict_churn(
-        input_file="outputs/selected_ecommerce.csv",
-        model_file=r"C:\Users\Mamatha\Desktop\models\ecommerce_ann.keras",
-        scaler_file=r"C:\Users\Mamatha\Desktop\models\ecommerce_ann_scaler.pkl",
-        output_file="outputs/predicted_ecommerce.csv",
-        threshold=0.45
+        input_file="../outputs/selected_features.csv",
+        output_file="../outputs/predicted_combined.csv",
+        threshold=0.5
     )
 
     print("🎉 All Predictions Completed Successfully!")

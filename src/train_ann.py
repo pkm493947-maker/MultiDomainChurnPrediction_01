@@ -1,3 +1,4 @@
+# train_ann.py
 import pandas as pd
 import numpy as np
 import os
@@ -5,59 +6,91 @@ import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-
+from sklearn.feature_selection import mutual_info_classif
 from imblearn.over_sampling import SMOTE
-
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Input
-from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow import keras
+from tensorflow.keras import layers
 
 
-def train_ann_model(file_path, model_name, target_column="Churn", threshold=0.45):
-    print("\n----------------------------------------")
-    print(f"📌 Training ANN Model for: {file_path}")
+# ==============================
+# CONFIG
+# ==============================
 
-    # Load dataset
-    df = pd.read_csv(file_path)
+DATA_PATH = "../outputs/selected_features.csv"  # Combined selected dataset
+MODEL_SAVE_PATH = "../models/combined_ann.keras"
+SCALER_SAVE_PATH = "../models/combined_scaler.pkl"
+FEATURE_SAVE_PATH = "../models/combined_features.pkl"
 
-    if target_column not in df.columns:
-        print(f"❌ Target column '{target_column}' not found in dataset!")
-        return
 
-    # Features and target
-    X = df.drop(target_column, axis=1)
-    y = df[target_column]
+# ==============================
+# TRAIN FUNCTION
+# ==============================
 
-    # Split first
+def train_ann_model():
+
+    print("\n------------------------------------")
+    print("📌 Loading Dataset for Training")
+
+    df = pd.read_csv(DATA_PATH)
+
+    print("✅ Dataset Loaded")
+    print("📊 Shape:", df.shape)
+
+    # Separate target
+    if "Churn" not in df.columns:
+        raise ValueError("❌ Churn column missing!")
+
+    y = df["Churn"]
+    X = df.drop("Churn", axis=1)
+
+    # Train test split
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    # Apply SMOTE only on training set
-    print("✅ Applying SMOTE Oversampling ONLY on training data...")
+    print("✅ Data Split Completed")
+
+    # -----------------------
+    # SMOTE
+    # -----------------------
+
+    print("⚖ Applying SMOTE...")
+
     smote = SMOTE(random_state=42)
     X_train, y_train = smote.fit_resample(X_train, y_train)
 
+    print("✅ SMOTE Applied")
+    print(y_train.value_counts())
+
+    # -----------------------
     # Scaling
+    # -----------------------
+
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
 
-    # ANN Model
-    model = Sequential([
-        Input(shape=(X_train.shape[1],)),
-        Dense(128, activation="relu"),
-        Dropout(0.3),
+    joblib.dump(scaler, SCALER_SAVE_PATH)
+    print("✅ Scaler Saved")
 
-        Dense(64, activation="relu"),
-        Dropout(0.3),
+    # Save feature list for prediction alignment
+    feature_list = X.columns.tolist()
+    joblib.dump(feature_list, FEATURE_SAVE_PATH)
+    print("✅ Feature List Saved:", FEATURE_SAVE_PATH)
 
-        Dense(32, activation="relu"),
-        Dropout(0.2),
+    # -----------------------
+    # ANN MODEL
+    # -----------------------
 
-        Dense(1, activation="sigmoid")
+    print("🚀 Training Model...")
+
+    model = keras.Sequential([
+        layers.Dense(128, activation="relu", input_shape=(X_train.shape[1],)),
+        layers.Dropout(0.3),
+        layers.Dense(64, activation="relu"),
+        layers.Dropout(0.3),
+        layers.Dense(32, activation="relu"),
+        layers.Dense(1, activation="sigmoid")
     ])
 
     model.compile(
@@ -66,61 +99,26 @@ def train_ann_model(file_path, model_name, target_column="Churn", threshold=0.45
         metrics=["accuracy"]
     )
 
-    # Early stopping
-    early_stop = EarlyStopping(
-        monitor="val_loss",
-        patience=5,
-        restore_best_weights=True
-    )
-
-    # Train
     model.fit(
-        X_train, y_train,
+        X_train,
+        y_train,
+        validation_data=(X_test, y_test),
         epochs=50,
-        batch_size=32,
-        validation_split=0.2,
-        callbacks=[early_stop],
-        verbose=1
+        batch_size=32
     )
 
-    # Predict probabilities
-    y_prob = model.predict(X_test)
+    # Save Model
+    model.save(MODEL_SAVE_PATH)
 
-    # Apply threshold
-    y_pred = (y_prob >= threshold).astype(int)
+    print("💾 Model Saved:", MODEL_SAVE_PATH)
+    print("------------------------------------")
+    print("🎉 Training Finished Successfully!")
 
-    # Results
-    acc = accuracy_score(y_test, y_pred)
-    print(f"\n✅ Accuracy of {model_name}: {acc:.4f}")
-    print(f"🎯 Threshold used: {threshold}")
 
-    print("\n📌 Confusion Matrix:")
-    print(confusion_matrix(y_test, y_pred))
-
-    print("\n📌 Classification Report:")
-    print(classification_report(y_test, y_pred))
-
-    # Save model + scaler
-    model_folder = os.path.join(os.path.expanduser("~"), "Desktop", "models")
-    os.makedirs(model_folder, exist_ok=True)
-
-    model_path = os.path.join(model_folder, f"{model_name}.keras")
-    scaler_path = os.path.join(model_folder, f"{model_name}_scaler.pkl")
-
-    model.save(model_path)
-    joblib.dump(scaler, scaler_path)
-
-    print(f"\n✅ Model Saved: {model_path}")
-    print(f"✅ Scaler Saved: {scaler_path}")
-    print("----------------------------------------")
-
+# ==============================
+# RUN
+# ==============================
 
 if __name__ == "__main__":
-    train_ann_model("outputs/selected_telecom.csv", "telecom_ann", target_column="Churn", threshold=0.45)
-
-    # Banking dataset target column is "Exited"
-    train_ann_model("outputs/selected_banking.csv", "banking_ann", target_column="Exited", threshold=0.45)
-
-    train_ann_model("outputs/selected_ecommerce.csv", "ecommerce_ann", target_column="Churn", threshold=0.45)
-
-    print("\n🎉 All ANN Models Trained Successfully with SMOTE + EarlyStopping + Better Threshold!")
+    os.makedirs("../models", exist_ok=True)
+    train_ann_model()
